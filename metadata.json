@@ -1,0 +1,8 @@
+{
+  "name": "Remix מבדק במתמטיקה על זמן",
+  "description": "אפליקציית מבחן במתמטיקה מתוזמן לפי שאלות לשכבות ט׳ ו-י׳ הכוללת אריתמטיקה, אלגברה, משוואת הישר וגיאומטריה",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

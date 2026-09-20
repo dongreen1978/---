@@ -1,0 +1,37 @@
+@import "tailwindcss";
+
+@layer base {
+  body {
+    font-family: 'Assistant', 'Rubik', system-ui, -apple-system, sans-serif;
+  }
+}
+
+.ltr-text {
+  direction: ltr;
+  display: inline-block;
+  unicode-bidi: embed;
+}
+
+.fraction {
+  display: inline-flex;
+  flex-direction: column;
+  vertical-align: middle;
+  text-align: center;
+  padding: 0 4px;
+}
+
+.numerator {
+  border-bottom: 2px solid currentColor;
+  padding-bottom: 1px;
+}
+
+.denominator {
+  padding-top: 1px;
+}
+
+.mixed-number {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+
