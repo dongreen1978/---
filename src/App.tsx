@@ -1036,7 +1036,7 @@ export default function App() {
                       setQ5Val(e.target.value);
                       setValidationWarning(null);
                     }}
-                    placeholder="למשל: -3.5"
+                    placeholder="למשל: -5"
                     className="w-full text-center py-3.5 px-4 text-xl font-bold font-mono border-2 border-slate-300 rounded-xl focus:border-sky-600 focus:outline-none focus:ring-2 focus:ring-sky-100 text-slate-800"
                     dir="ltr"
                   />
@@ -1146,7 +1146,7 @@ export default function App() {
                         setQ7Val(e.target.value);
                         setValidationWarning(null);
                       }}
-                      placeholder="למשל: y = -2x - 4"
+                      placeholder="למשל: y = x +4"
                       className="flex-1 px-4 py-3 border-2 border-slate-300 rounded-xl focus:border-sky-600 focus:outline-none focus:ring-2 focus:ring-sky-100 text-base font-mono font-bold text-slate-800"
                       dir="ltr"
                     />
@@ -1213,7 +1213,7 @@ export default function App() {
                         setQ8Val(e.target.value);
                         setValidationWarning(null);
                       }}
-                      placeholder="למשל: y = x"
+                      placeholder="למשל: y = 2x+3"
                       className="flex-1 px-4 py-3 border-2 border-slate-300 rounded-xl focus:border-sky-600 focus:outline-none focus:ring-2 focus:ring-sky-100 text-base font-mono font-bold text-slate-800"
                       dir="ltr"
                     />
@@ -1367,7 +1367,7 @@ export default function App() {
                       setQ10aVal(e.target.value);
                       setValidationWarning(null);
                     }}
-                    placeholder="למשל: 25 או x = 25"
+                    placeholder="למשל: 2 או x = 2"
                     className="w-full text-center py-3 px-4 text-xl font-bold font-mono border-2 border-slate-300 rounded-xl focus:border-sky-600 focus:outline-none focus:ring-2 focus:ring-sky-100 text-slate-800"
                     dir="ltr"
                   />
