@@ -108,7 +108,7 @@ export function evaluateExamResults(answers: ExamAnswers, times: QuestionTimes):
     name: 'שאלה 2: חזקות וסדר פעולות חשבון',
     userAnswer: answers.q2_answer || 'לא נענה',
     correctAnswer: 'ה (או גורם משותף תקני)',
-    isCorrect: answers.q2_answer === 'ה' || answers.q2_answer === 'ג',
+    isCorrect: answers.q2_answer === 'ג',
     timeSpent: times.q2_time || '-',
     points: 10,
     earnedPoints: (answers.q2_answer === 'ה' || answers.q2_answer === 'ג') ? 10 : 0,
