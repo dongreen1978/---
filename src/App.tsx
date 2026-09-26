@@ -198,7 +198,6 @@ export default function App() {
   }, [currentStep]);
 
   // Question countdown timer management (individual per step)
-  // טיימר ספירה למעלה עבור השאלה הנוכחית
   useEffect(() => {
     if (currentStep < 2 || currentStep > 12) {
       clearInterval(questionTimerInterval.current);
@@ -218,6 +217,7 @@ export default function App() {
 
     return () => clearInterval(questionTimerInterval.current);
   }, [currentStep]);
+
   // Save current step data into state
   const syncCurrentQuestionState = () => {
     switch (currentStep) {
@@ -404,6 +404,7 @@ export default function App() {
       scrollToTop();
     }, 1200);
   };
+
   const handleRetryExam = () => {
     setAnswers({});
     setTimes({});
@@ -422,37 +423,17 @@ export default function App() {
     setQ10aVal('');
     setQ10bState({ s1: '', r1: '', s2: '', r2: '', s3: '', thm: '', tri: '' });
     
-    // עדכון איפוס השעונים לספירה עולה
     setStepElapsedSeconds({
-      2: 0,
-      3: 0,
-      4: 0,
-      5: 0,
-      6: 0,
-      7: 0,
-      8: 0,
-      9: 0,
-      10: 0,
-      11: 0,
-      12: 0,
+      2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0, 10: 0, 11: 0, 12: 0,
     });
     setStepAccumulatedMs({
-      2: 0,
-      3: 0,
-      4: 0,
-      5: 0,
-      6: 0,
-      7: 0,
-      8: 0,
-      9: 0,
-      10: 0,
-      11: 0,
-      12: 0,
+      2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0, 10: 0, 11: 0, 12: 0,
     });
     setOverallElapsedSeconds(0);
     setCurrentStep(0);
     scrollToTop();
   };
+
   // Helper render for bottom navigation bar on each question
   const renderBottomNav = (isAnswered: boolean, onClear?: () => void) => {
     const isFirst = currentStep === 2;
@@ -1133,44 +1114,62 @@ export default function App() {
 
                 <InteractiveGraphQ7 />
 
-                <div className="bg-slate-50 border border-slate-200 rounded-2xl p-4 sm:p-5 my-5">
-                  <label htmlFor="ans-q7" className="block text-sm font-bold text-slate-800 mb-2">
-                    תשובתך (רשום/י את משוואת הישר בצורה y = mx + b):
-                  </label>
-                  <div className="flex flex-col sm:flex-row gap-2.5">
-                    <input
-                      id="ans-q7"
-                      type="text"
-                      value={q7Val}
-                      onChange={(e) => {
-                        setQ7Val(e.target.value);
-                        setValidationWarning(null);
-                      }}
-                      placeholder="למשל: y = x +4"
-                      className="flex-1 px-4 py-3 border-2 border-slate-300 rounded-xl focus:border-sky-600 focus:outline-none focus:ring-2 focus:ring-sky-100 text-base font-mono font-bold text-slate-800"
-                      dir="ltr"
-                    />
+                <div className="space-y-3 my-6">
+                  {[
+                    { val: '1', label: '1) y = -2x + 1' },
+                    { val: '2', label: '2) y = -0.5x - 4' },
+                    { val: '3', label: '3) y = -0.5x + 4' },
+                    { val: '4', label: '4) y = -2x - 4' },
+                    { val: '5', label: '5) כל התשובות אינן נכונות (חוץ מתשובה זו)' },
+                  ].map((opt) => (
+                    <label
+                      key={opt.val}
+                      className={`flex items-center gap-3 p-3.5 rounded-xl border-2 cursor-pointer transition-all ${
+                        q7Val === opt.val
+                          ? 'border-sky-600 bg-sky-50 text-sky-950 font-bold shadow-xs'
+                          : 'border-slate-200 hover:border-sky-300 hover:bg-slate-50 text-slate-700'
+                      }`}
+                    >
+                      <input
+                        type="radio"
+                        name="q7"
+                        value={opt.val}
+                        checked={q7Val === opt.val}
+                        onChange={(e) => {
+                          setQ7Val(e.target.value);
+                          setQ7Feedback(null);
+                          setValidationWarning(null);
+                        }}
+                        className="w-4 h-4 accent-sky-600 cursor-pointer"
+                      />
+                      <span className="text-base font-medium" dir="ltr">{opt.label}</span>
+                    </label>
+                  ))}
+                </div>
+
+                {q7Val && (
+                  <div className="mb-4">
                     <button
                       type="button"
                       onClick={() => setQ7Feedback(checkAnswerQ7(q7Val))}
-                      className="px-5 py-3 bg-slate-200 hover:bg-slate-300 text-slate-800 font-bold rounded-xl transition-colors text-sm shrink-0 cursor-pointer"
+                      className="px-5 py-2.5 bg-slate-200 hover:bg-slate-300 text-slate-800 font-bold rounded-xl transition-colors text-sm shrink-0 cursor-pointer"
                     >
                       בדוק תשובה בלבד
                     </button>
-                  </div>
 
-                  {q7Feedback && (
-                    <div
-                      className={`mt-3 p-3 rounded-xl text-sm font-semibold ${
-                        q7Feedback.isCorrect
-                          ? 'bg-emerald-50 text-emerald-800 border border-emerald-200'
-                          : 'bg-amber-50 text-amber-800 border border-amber-200'
-                      }`}
-                    >
-                      {q7Feedback.feedback}
-                    </div>
-                  )}
-                </div>
+                    {q7Feedback && (
+                      <div
+                        className={`mt-3 p-3 rounded-xl text-sm font-semibold ${
+                          q7Feedback.isCorrect
+                            ? 'bg-emerald-50 text-emerald-800 border border-emerald-200'
+                            : 'bg-amber-50 text-amber-800 border border-amber-200'
+                        }`}
+                      >
+                        {q7Feedback.feedback}
+                      </div>
+                    )}
+                  </div>
+                )}
 
                 {renderBottomNav(!!q7Val.trim(), () => {
                   setQ7Val('');
@@ -1200,44 +1199,62 @@ export default function App() {
                   מצא את משוואת הישר העובר דרך שתי הנקודות.
                 </p>
 
-                <div className="bg-slate-50 border border-slate-200 rounded-2xl p-4 sm:p-5 my-5">
-                  <label htmlFor="ans-q8" className="block text-sm font-bold text-slate-800 mb-2">
-                    תשובתך (משוואת ישר בצורה y = mx + b):
-                  </label>
-                  <div className="flex flex-col sm:flex-row gap-2.5">
-                    <input
-                      id="ans-q8"
-                      type="text"
-                      value={q8Val}
-                      onChange={(e) => {
-                        setQ8Val(e.target.value);
-                        setValidationWarning(null);
-                      }}
-                      placeholder="למשל: y = 2x+3"
-                      className="flex-1 px-4 py-3 border-2 border-slate-300 rounded-xl focus:border-sky-600 focus:outline-none focus:ring-2 focus:ring-sky-100 text-base font-mono font-bold text-slate-800"
-                      dir="ltr"
-                    />
+                <div className="space-y-3 my-6">
+                  {[
+                    { val: '1', label: '1) y = 2x + 2' },
+                    { val: '2', label: '2) y = -x' },
+                    { val: '3', label: '3) y = x' },
+                    { val: '4', label: '4) y = x - 2' },
+                    { val: '5', label: '5) כל התשובות אינן נכונות (חוץ מתשובה זו)' },
+                  ].map((opt) => (
+                    <label
+                      key={opt.val}
+                      className={`flex items-center gap-3 p-3.5 rounded-xl border-2 cursor-pointer transition-all ${
+                        q8Val === opt.val
+                          ? 'border-sky-600 bg-sky-50 text-sky-950 font-bold shadow-xs'
+                          : 'border-slate-200 hover:border-sky-300 hover:bg-slate-50 text-slate-700'
+                      }`}
+                    >
+                      <input
+                        type="radio"
+                        name="q8"
+                        value={opt.val}
+                        checked={q8Val === opt.val}
+                        onChange={(e) => {
+                          setQ8Val(e.target.value);
+                          setQ8Feedback(null);
+                          setValidationWarning(null);
+                        }}
+                        className="w-4 h-4 accent-sky-600 cursor-pointer"
+                      />
+                      <span className="text-base font-medium" dir="ltr">{opt.label}</span>
+                    </label>
+                  ))}
+                </div>
+
+                {q8Val && (
+                  <div className="mb-4">
                     <button
                       type="button"
                       onClick={() => setQ8Feedback(checkAnswerQ8(q8Val))}
-                      className="px-5 py-3 bg-slate-200 hover:bg-slate-300 text-slate-800 font-bold rounded-xl transition-colors text-sm shrink-0 cursor-pointer"
+                      className="px-5 py-2.5 bg-slate-200 hover:bg-slate-300 text-slate-800 font-bold rounded-xl transition-colors text-sm shrink-0 cursor-pointer"
                     >
                       בדוק תשובה בלבד
                     </button>
-                  </div>
 
-                  {q8Feedback && (
-                    <div
-                      className={`mt-3 p-3 rounded-xl text-sm font-semibold ${
-                        q8Feedback.isCorrect
-                          ? 'bg-emerald-50 text-emerald-800 border border-emerald-200'
-                          : 'bg-amber-50 text-amber-800 border border-amber-200'
-                      }`}
-                    >
-                      {q8Feedback.feedback}
-                    </div>
-                  )}
-                </div>
+                    {q8Feedback && (
+                      <div
+                        className={`mt-3 p-3 rounded-xl text-sm font-semibold ${
+                          q8Feedback.isCorrect
+                            ? 'bg-emerald-50 text-emerald-800 border border-emerald-200'
+                            : 'bg-amber-50 text-amber-800 border border-amber-200'
+                        }`}
+                      >
+                        {q8Feedback.feedback}
+                      </div>
+                    )}
+                  </div>
+                )}
 
                 {renderBottomNav(!!q8Val.trim(), () => {
                   setQ8Val('');
