@@ -1,4 +1,5 @@
 import { StudentDetails, ExamAnswers, QuestionTimes } from '../types';
+
 export const GOOGLE_SCRIPT_URL =
   'https://script.google.com/macros/s/AKfycbznj9ni-peEc1TM3fdgbewwt0dKxJrcaqwg_SzXNvj3D_1q3T-CCRrKCzeVxFtazHYI/exec';
 
@@ -14,54 +15,39 @@ export function formatDuration(ms: number): string {
 
 export function formatTimeRemaining(seconds: number): string {
   const mins = Math.floor(seconds / 60);
-  const secs = seconds % 60;
+  const secs = Math.floor(seconds % 60);
   return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
 }
 
-export function isLinearEquationForm(inputStr: string): boolean {
-  const clean = inputStr.toLowerCase().replace(/\s+/g, '');
-  return clean.includes('y=') && clean.includes('x');
-}
-
 export function checkAnswerQ7(inputVal: string): { isCorrect: boolean; feedback: string } {
-  if (!inputVal.trim()) {
-    return { isCorrect: false, feedback: 'אנא הקלד תשובה לפני הבדיקה.' };
+  if (!inputVal || !inputVal.trim()) {
+    return { isCorrect: false, feedback: 'אנא בחר תשובה מהרשימה.' };
   }
-  if (!isLinearEquationForm(inputVal)) {
-    return {
-      isCorrect: false,
-      feedback: 'רמז: רשום את התשובה במבנה של משוואת ישר (y = mx + b).',
-    };
-  }
-  const clean = inputVal.toLowerCase().replace(/\s+/g, '');
-  const accepted = ['y=-2x-4', 'y=-2*x-4', 'y=-4-2x', 'y=-4+-2x'];
-  if (accepted.includes(clean)) {
+  const clean = inputVal.trim().toLowerCase().replace(/\s+/g, '');
+  // תשובה 4 היא הנכונה: y=-2x-4
+  const isCorrect = clean === '4' || clean.includes('y=-2x-4');
+  if (isCorrect) {
     return { isCorrect: true, feedback: 'מצוין! תשובה נכונה.' };
   }
   return {
     isCorrect: false,
-    feedback: 'רמז: זכור כי משוואת ישר היא מהצורה y = mx + b. מצא את שיפוע הישר מתוך שתי הנקודות ואת נקודת החיתוך עם ציר y.',
+    feedback: 'תשובה שגויה. רמז: מצא את שיפוע הישר מתוך שתי הנקודות ואת נקודת החיתוך עם ציר y.',
   };
 }
 
 export function checkAnswerQ8(inputVal: string): { isCorrect: boolean; feedback: string } {
-  if (!inputVal.trim()) {
-    return { isCorrect: false, feedback: 'אנא הקלד תשובה לפני הבדיקה.' };
+  if (!inputVal || !inputVal.trim()) {
+    return { isCorrect: false, feedback: 'אנא בחר תשובה מהרשימה.' };
   }
-  if (!isLinearEquationForm(inputVal)) {
-    return {
-      isCorrect: false,
-      feedback: 'רמז: רשום את התשובה במבנה של משוואת ישר (y = mx + b).',
-    };
-  }
-  const clean = inputVal.toLowerCase().replace(/\s+/g, '');
-  const accepted = ['y=x', 'y=1x', 'y=1x+0', 'y=x+0', 'y=0+x', 'y=0+1x'];
-  if (accepted.includes(clean)) {
+  const clean = inputVal.trim().toLowerCase().replace(/\s+/g, '');
+  // תשובה 3 היא הנכונה: y=x
+  const isCorrect = clean === '3' || clean === 'y=x' || clean.includes('y=x');
+  if (isCorrect) {
     return { isCorrect: true, feedback: 'מצוין! תשובה נכונה.' };
   }
   return {
     isCorrect: false,
-    feedback: 'רמז: חשב את השיפוע m = (y2 - y1) / (x2 - x1), והצב באחת הנקודות למציאת b.',
+    feedback: 'תשובה שגויה. רמז: חשב את השיפוע m = (y2 - y1) / (x2 - x1), והצב באחת הנקודות למציאת b.',
   };
 }
 
@@ -84,37 +70,31 @@ export function evaluateExamResults(answers: ExamAnswers, times: QuestionTimes):
 } {
   const items: QuestionResultItem[] = [];
 
-  // Q1: User answer comparison
-  // Q1 option check:
-  // Math: (-1/6) + 1/6 : (9/4 + 8/3) = -1/6 + 1/6 : (59/12) = -1/6 + 2/59 = -47/354.
-  // In the original multiple choice list:
-  // Options: 'א' (0), 'ב' (1/29), 'ג' (1/43), 'ד' (5/12).
-  // Some school exams accepted 'ד' or 'ב' based on key, we compare strictly with the selected value.
+  // Q1
   items.push({
-  id: 'q1',
-  name: 'שאלה 1: אריתמטיקה של שברים',
-  userAnswer: answers.q1_answer || 'לא נענה',
-  correctAnswer: 'ג',
-  isCorrect: answers.q1_answer === 'ג',
-  timeSpent: times.q1_time || '-',
-  points: 10,
-  earnedPoints: answers.q1_answer === 'ג' ? 10 : 0,
+    id: 'q1',
+    name: 'שאלה 1: אריתמטיקה של שברים',
+    userAnswer: answers.q1_answer || 'לא נענה',
+    correctAnswer: 'ג',
+    isCorrect: answers.q1_answer === 'ג',
+    timeSpent: times.q1_time || '-',
+    points: 10,
+    earnedPoints: answers.q1_answer === 'ג' ? 10 : 0,
   });
 
-  // Q2: - ( -2^3 - (-2)^3 : (-1^3) ) / 2^3 => 2
-  // option ה or option ג depending on formulation. Option ה is "כל התשובות אינן נכונות (חוץ מתשובה זו)"
+  // Q2
   items.push({
     id: 'q2',
     name: 'שאלה 2: חזקות וסדר פעולות חשבון',
     userAnswer: answers.q2_answer || 'לא נענה',
     correctAnswer: 'ה (או גורם משותף תקני)',
-    isCorrect: answers.q2_answer === 'ג',
+    isCorrect: answers.q2_answer === 'ה' || answers.q2_answer === 'ג',
     timeSpent: times.q2_time || '-',
     points: 10,
     earnedPoints: (answers.q2_answer === 'ה' || answers.q2_answer === 'ג') ? 10 : 0,
   });
 
-  // Q3: b < 0, a > 0 => b - a < 0 (option א)
+  // Q3
   const q3Correct = answers.q3_answer === 'א';
   items.push({
     id: 'q3',
@@ -127,7 +107,7 @@ export function evaluateExamResults(answers: ExamAnswers, times: QuestionTimes):
     earnedPoints: q3Correct ? 10 : 0,
   });
 
-  // Q4: (a: 37.5% -> option 4, b: 27.27% -> option 3)
+  // Q4
   const q4aCorrect = answers.q4a_answer === '4';
   const q4bCorrect = answers.q4b_answer === '3';
   items.push({
@@ -141,7 +121,7 @@ export function evaluateExamResults(answers: ExamAnswers, times: QuestionTimes):
     earnedPoints: (q4aCorrect ? 5 : 0) + (q4bCorrect ? 5 : 0),
   });
 
-  // Q5: value for x=4 is -3.5 (or -7/2)
+  // Q5
   const cleanQ5 = (answers.q5_answer || '').replace(/\s+/g, '');
   const q5Correct = cleanQ5 === '-3.5' || cleanQ5 === '-7/2' || cleanQ5 === '-31/2';
   items.push({
@@ -155,7 +135,7 @@ export function evaluateExamResults(answers: ExamAnswers, times: QuestionTimes):
     earnedPoints: q5Correct ? 10 : 0,
   });
 
-  // Q6: linear equation => x = 4 (option א)
+  // Q6
   const q6Correct = answers.q6_answer === 'א';
   items.push({
     id: 'q6',
@@ -168,34 +148,33 @@ export function evaluateExamResults(answers: ExamAnswers, times: QuestionTimes):
     earnedPoints: q6Correct ? 10 : 0,
   });
 
-  // Q7: y = -2x - 4
+  // Q7: y = -2x - 4 (אפשרות 4)
   const q7Correct = checkAnswerQ7(answers.q7_answer || '').isCorrect;
   items.push({
     id: 'q7',
     name: 'שאלה 7: מציאת משוואת ישר מתוך שרטוט',
     userAnswer: answers.q7_answer || 'לא נענה',
-    correctAnswer: 'y = -2x - 4',
+    correctAnswer: '4 (y = -2x - 4)',
     isCorrect: q7Correct,
     timeSpent: times.q7_time || '-',
     points: 10,
     earnedPoints: q7Correct ? 10 : 0,
   });
 
-  // Q8: y = x
+  // Q8: y = x (אפשרות 3)
   const q8Correct = checkAnswerQ8(answers.q8_answer || '').isCorrect;
   items.push({
     id: 'q8',
     name: 'שאלה 8: משוואת ישר דרך 2 נקודות',
     userAnswer: answers.q8_answer || 'לא נענה',
-    correctAnswer: 'y = x',
+    correctAnswer: '3 (y = x)',
     isCorrect: q8Correct,
     timeSpent: times.q8_time || '-',
     points: 10,
     earnedPoints: q8Correct ? 10 : 0,
   });
 
-  // Q9: True/False statements
-  // a: לא נכון, b: נכון, c: לא נכון, d: נכון, e: לא נכון, f: לא נכון, g: נכון
+  // Q9
   const q9AnswersKey = {
     a: 'לא נכון',
     b: 'נכון',
@@ -224,7 +203,7 @@ export function evaluateExamResults(answers: ExamAnswers, times: QuestionTimes):
     earnedPoints: Math.round(q9Score),
   });
 
-  // Q10a: x = 25
+  // Q10a
   const cleanQ10a = (answers.q10a_answer || '').toLowerCase().replace(/\s+/g, '');
   const q10aCorrect = cleanQ10a === '25' || cleanQ10a === 'x=25';
   items.push({
@@ -238,7 +217,7 @@ export function evaluateExamResults(answers: ExamAnswers, times: QuestionTimes):
     earnedPoints: q10aCorrect ? 5 : 0,
   });
 
-  // Q10b: Proof completion
+  // Q10b
   const cleanS1 = (answers.q10b_s1 || '').trim().toUpperCase();
   const cleanS2 = (answers.q10b_s2 || '').trim().toUpperCase();
   const s1Ok = cleanS1.includes('OK') || cleanS1.includes('KO');
@@ -276,25 +255,21 @@ export const submitExam = async (
   answers: ExamAnswers,
   times: QuestionTimes
 ) => {
-  // חישוב הציון הסופי
   const { totalScore } = evaluateExamResults(answers, times);
 
   const params = new URLSearchParams();
 
-  // פרטי תלמיד
   params.append('timestamp', student.timestamp || new Date().toLocaleString('he-IL'));
   params.append('fullName', student.fullName);
-  params.append('idNumber', student.idNumber || ''); // <-- תעודת זהות (חדש!)
+  params.append('idNumber', student.idNumber || '');
   params.append('layer', student.layer);
   params.append('classNum', String(student.classNum));
   params.append('masteryLevel', String(student.masteryLevel));
   params.append('homework', student.homework);
 
-  // ציון סופי וזמן
-  params.append('totalScore', String(totalScore));   // <-- ציון סופי (חדש!)
+  params.append('totalScore', String(totalScore));
   params.append('totalTime', times.totalTime || '');
 
-  // תשובות וזמנים של השאלות
   params.append('q1_answer', answers.q1_answer || '');
   params.append('q1_time', times.q1_time || '');
   params.append('q2_answer', answers.q2_answer || '');
